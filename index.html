@@ -1364,7 +1364,7 @@
                 // Zwrot za telefon
                 let phoneRefund = 0;
                 if (monthStats.totalHours > 0 && monthStats.totalHours < 40) {
-                    phoneRefund = (40 - monthStats.totalHours) * this.PHONE_REFUND_LOW;
+                    phoneRefund = monthStats.totalHours * this.PHONE_REFUND_LOW;
                 } else if (monthStats.totalHours >= 40) {
                     phoneRefund = this.PHONE_REFUND_HIGH;
                 }

@@ -1065,6 +1065,7 @@
             selectedDate: null,
             vehicle: 'car',
             HOURLY_RATE: 30.5,
+            HOURLY_RATE_2026: 31.4,
             DEPRECIATION_CAR: 0.23,
             DEPRECIATION_BIKE: 0.1,
             MILEAGE_CAR: 0.85,
@@ -1082,6 +1083,12 @@
                 document.getElementById('hours').addEventListener('change', () => this.updateTimeConversion());
                 document.getElementById('minutes').addEventListener('change', () => this.updateTimeConversion());
             },
+
+            getRateForYear(year) {
+                if (year === 2026) return this.HOURLY_RATE_2026;
+                return this.HOURLY_RATE;
+            },  
+
 
             setVehicle(type) {
                 this.vehicle = type;
@@ -1146,6 +1153,7 @@
 
             formatDate(date) {
                 return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+                
             },
 
             calculateMonthlyStats(monthData) {
@@ -1178,8 +1186,12 @@
 
             calculateDailyEarnings(entry, monthStats) {
                 if (!entry) return 0;
+                const dateStr = Object.keys(this.data.entries).find(key => this.data.entries[key] === entry);
+                const date0 = new Date(dateStr);
+                const year = date0.getFullYear();
+                const currentRate = this.getRateForYear(year);
 
-                const hourlyEarnings = entry.hours * this.HOURLY_RATE;
+                const hourlyEarnings = entry.hours * currentRate;
                 const mileageEarnings = entry.km * this.getMileageRate();
                 const laundryEarnings = entry.hours * this.LAUNDRY_PER_HOUR;
 
@@ -1344,6 +1356,8 @@
                 document.getElementById('totalTips').textContent = '+ ' + monthStats.totalTips.toFixed(2) + ' zł';
                 document.getElementById('totalFuel').textContent = '- ' + totalFuel.toFixed(2) + ' zł';
 
+
+                
                 const payment1Hours = Object.entries(this.data.entries || {})
                     .filter(([dateStr]) => {
                         const date = new Date(dateStr);
@@ -1352,12 +1366,13 @@
                     .reduce((sum, [, entry]) => sum + entry.hours, 0);
 
                 const payment2Hours = monthStats.totalHours - payment1Hours;
-                const payment1 = payment1Hours * this.HOURLY_RATE;
+                const currentRate = this.getRateForYear(this.currentDate.getFullYear());
+                const payment1 = payment1Hours * currentRate;
 
                 const laundry = monthStats.totalHours * this.LAUNDRY_PER_HOUR;
                 const mileage = monthStats.totalKm * this.getMileageRate();
                 const orderBonus = (monthStats.weekdayOrders * monthStats.weekdayMultiplier) + (monthStats.weekendOrders * monthStats.weekendMultiplier);
-                const payment2 = (payment2Hours * this.HOURLY_RATE) + monthStats.totalTips + laundry + mileage + orderBonus;
+                const payment2 = (payment2Hours * currentRate) + monthStats.totalTips + laundry + mileage + orderBonus;
 
                 const grossPayment = payment1 + payment2;
 

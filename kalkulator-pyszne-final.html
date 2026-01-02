@@ -1,0 +1,1456 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Kalkulator Zarobków</title>
+    <link rel="icon" type="image/x-icon" href="https://www.pyszne.pl/consumer-web/root-static/favicon.ico?version=1">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            width: 100%;
+            height: 100%;
+            overflow-x: hidden;
+        }
+
+        body {
+            width: 100%;
+            max-width: 100vw;
+            overflow-x: hidden;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #0d1117;
+            min-height: 100vh;
+            padding: 10px;
+            color: #e0e0e0;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            background: #161b22;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+            border: 1px solid #30363d;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #ff6b4a 0%, #ff4d2d 100%);
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            width: 100%;
+            max-width: 100%;
+            overflow: hidden;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .header-controls {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            max-width: 100%;
+            align-items: center;
+        }
+
+        .vehicle-toggle {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 20px;
+            padding: 4px;
+            display: flex;
+            gap: 4px;
+        }
+
+        .vehicle-btn {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 16px;
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: 600;
+            background: transparent;
+            color: white;
+            transition: all 0.3s;
+        }
+
+        .vehicle-btn.active {
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        .btn {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.3s;
+            white-space: nowrap;
+        }
+
+        .btn-primary {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-primary:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .btn-info {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-info:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-danger {
+            background: #da3633;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c72c27;
+        }
+
+        .content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            padding: 20px;
+            width: 100%;
+            max-width: 100%;
+            overflow: hidden;
+        }
+
+        .calendar-section {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            width: 100%;
+            max-width: 100%;
+            overflow: hidden;
+        }
+
+        .month-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+            max-width: 100%;
+        }
+
+        .month-nav button {
+            padding: 8px 12px;
+            background: #ff6b4a;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 12px;
+            flex: 0 0 auto;
+        }
+
+        .month-nav button:hover {
+            background: #ff5233;
+            transform: translateY(-1px);
+        }
+
+        .month-display {
+            text-align: center;
+            font-size: 14px;
+            font-weight: 700;
+            color: #e0e0e0;
+            flex: 1;
+            min-width: 100px;
+            white-space: nowrap;
+        }
+
+        .calendar {
+            background: #21262d;
+            border-radius: 12px;
+            padding: 15px;
+            border: 1px solid #30363d;
+            width: 100%;
+            max-width: 100%;
+            overflow: hidden;
+        }
+
+        .calendar-header {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 6px;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #ff6b4a;
+            text-align: center;
+            font-size: 11px;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 6px;
+            width: 100%;
+            max-width: 100%;
+            overflow: hidden;
+        }
+
+        .calendar-day {
+            aspect-ratio: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid #30363d;
+            border-radius: 8px;
+            cursor: pointer;
+            background: #0d1117;
+            transition: all 0.3s;
+            font-size: 11px;
+            position: relative;
+            min-height: 60px;
+            padding: 4px;
+            width: 100%;
+            max-width: 100%;
+            overflow: hidden;
+        }
+
+        .calendar-day:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 107, 74, 0.2);
+            border-color: #ff6b4a;
+        }
+
+        .calendar-day-number {
+            font-weight: 700;
+            color: #e0e0e0;
+            font-size: 14px;
+        }
+
+        .calendar-day-amount {
+            color: #000000;
+            font-weight: 600;
+            font-size: 9px;
+            margin-top: 2px;
+            text-shadow: 0 0 2px rgba(255, 255, 255, 0.3);
+            word-break: break-word;
+        }
+
+        .calendar-day.other-month {
+            color: #3d444d;
+            background: #0d1117;
+            cursor: default;
+            border-color: #30363d;
+        }
+
+        .calendar-day.tier-0 { background: #0d1117; }
+        .calendar-day.tier-1 { background: #ffb399; }
+        .calendar-day.tier-2 { background: #ff9966; }
+        .calendar-day.tier-3 { background: #ff8533; }
+        .calendar-day.tier-4 { background: #ff7000; }
+        .calendar-day.tier-5 { background: #ff5500; }
+
+        .summary-section {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            width: 100%;
+            max-width: 100%;
+            overflow: hidden;
+        }
+
+        .summary-card {
+            background: #21262d;
+            border-radius: 12px;
+            padding: 15px;
+            border: 1px solid #30363d;
+            border-left: 4px solid #ff6b4a;
+            width: 100%;
+            max-width: 100%;
+            overflow: hidden;
+        }
+
+        .summary-card h3 {
+            color: #e0e0e0;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 0;
+            border-bottom: 1px solid #30363d;
+            font-size: 12px;
+            width: 100%;
+            max-width: 100%;
+            overflow: hidden;
+        }
+
+        .summary-item:last-child {
+            border-bottom: none;
+        }
+
+        .summary-item-label {
+            color: #8b949e;
+            font-weight: 500;
+            flex-shrink: 0;
+        }
+
+        .summary-item-value {
+            color: #e0e0e0;
+            font-weight: 700;
+            text-align: right;
+            margin-left: 8px;
+        }
+
+        .summary-item-value.income {
+            color: #58a65c;
+        }
+
+        .summary-item-value.cost {
+            color: #da3633;
+        }
+
+        .summary-item.hidden {
+            display: none;
+            color: #da3633;
+        }
+
+        .payment-box {
+            background: #0d1117;
+            border: 2px solid #ff6b4a;
+            border-radius: 12px;
+            padding: 12px;
+            margin-top: 10px;
+        }
+
+        .payment-box h4 {
+            color: white;
+            margin-bottom: 6px;
+            font-size: 12px;
+        }
+
+        .payment-amount {
+            font-size: 18px;
+            font-weight: 700;
+            color: #58a65c;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            animation: fadeIn 0.3s;
+            overflow: auto;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background-color: #161b22;
+            margin: 5% auto;
+            padding: 20px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            animation: slideIn 0.3s;
+            border: 1px solid #30363d;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #30363d;
+            padding-bottom: 10px;
+        }
+
+        .modal-header h2 {
+            color: #e0e0e0;
+            font-size: 16px;
+        }
+
+        .close {
+            font-size: 24px;
+            font-weight: bold;
+            color: #6e7681;
+            cursor: pointer;
+            background: none;
+            border: none;
+        }
+
+        .close:hover {
+            color: #e0e0e0;
+        }
+
+        .form-group {
+            margin-bottom: 12px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 4px;
+            color: #e0e0e0;
+            font-weight: 600;
+            font-size: 12px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 8px;
+            border: 2px solid #30363d;
+            border-radius: 6px;
+            font-size: 12px;
+            background: #21262d;
+            color: #e0e0e0;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #ff6b4a;
+        }
+
+        .time-inputs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .conversion-info {
+            background: rgba(255, 107, 74, 0.1);
+            color: #ff8c6b;
+            padding: 6px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-top: 4px;
+            text-align: center;
+            border: 1px solid rgba(255, 107, 74, 0.2);
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 8px;
+            margin-top: 16px;
+        }
+
+        .btn-submit {
+            flex: 1;
+            padding: 10px;
+            background: #ff6b4a;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 12px;
+        }
+
+        .btn-submit:hover {
+            background: #ff5233;
+        }
+
+        .btn-delete {
+            flex: 1;
+            padding: 10px;
+            background: #da3633;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 12px;
+        }
+
+        .btn-delete:hover {
+            background: #c72c27;
+        }
+
+        .btn-cancel {
+            flex: 1;
+            padding: 10px;
+            background: #30363d;
+            color: #e0e0e0;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 12px;
+        }
+
+        .btn-cancel:hover {
+            background: #40454e;
+        }
+
+        .info-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 12px 0;
+            font-size: 12px;
+        }
+
+        .info-table th {
+            background: #30363d;
+            color: #e0e0e0;
+            padding: 8px;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 2px solid #ff6b4a;
+        }
+
+        .info-table td {
+            background: #21262d;
+            color: #e0e0e0;
+            padding: 8px;
+            border-bottom: 1px solid #30363d;
+        }
+
+        .info-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .info-section {
+            margin-bottom: 16px;
+        }
+
+        .info-section h3 {
+            color: #ff6b4a;
+            font-size: 13px;
+            margin-bottom: 8px;
+            margin-top: 12px;
+        }
+
+        .info-section h3:first-child {
+            margin-top: 0;
+        }
+
+        small {
+            color: #6e7681 !important;
+            font-size: 10px;
+        }
+
+        @media (min-width: 769px) {
+            .content {
+                grid-template-columns: 1fr 1fr;
+                gap: 20px;
+            }
+
+            .header h1 {
+                font-size: 24px;
+            }
+
+            .calendar-day {
+                min-height: 60px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            html, body {
+                width: 100%;
+                max-width: 100vw;
+                overflow-x: hidden;
+                margin: 0;
+                padding: 0;
+            }
+
+            body {
+                padding: 4px;
+            }
+
+            .container {
+                width: 100%;
+                max-width: 100%;
+                margin: 0;
+                border-radius: 8px;
+            }
+
+            .header {
+                padding: 10px;
+                gap: 6px;
+                width: 100%;
+                max-width: 100%;
+                flex-direction: column;
+            }
+
+            .header h1 {
+                font-size: 16px;
+                width: 100%;
+            }
+
+            .header-controls {
+                width: 100%;
+                justify-content: space-between;
+                gap: 4px;
+            }
+
+            .vehicle-toggle {
+                padding: 3px;
+            }
+
+            .vehicle-btn {
+                padding: 4px 8px;
+                font-size: 9px;
+            }
+
+            .btn {
+                padding: 5px 8px;
+                font-size: 10px;
+            }
+
+            .content {
+                grid-template-columns: 1fr;
+                gap: 10px;
+                padding: 8px;
+                width: 100%;
+                max-width: 100%;
+            }
+
+            .calendar-section {
+                width: 100%;
+                max-width: 100%;
+                order: 1;
+            }
+
+            .summary-section {
+                width: 100%;
+                max-width: 100%;
+                order: 2;
+            }
+
+            .month-nav {
+                width: 100%;
+                max-width: 100%;
+                gap: 4px;
+            }
+
+            .month-nav button {
+                padding: 5px 6px;
+                font-size: 9px;
+                flex: 0 0 auto;
+            }
+
+            .month-display {
+                font-size: 11px;
+            }
+
+            .calendar {
+                padding: 6px;
+                width: 100%;
+                max-width: 100%;
+            }
+
+            .calendar-header {
+                gap: 3px;
+                font-size: 8px;
+                margin-bottom: 4px;
+            }
+
+            .calendar-grid {
+                gap: 3px;
+                width: 100%;
+                max-width: 100%;
+            }
+
+            .calendar-day {
+                min-height: 45px;
+                border-radius: 6px;
+                font-size: 8px;
+                padding: 2px;
+            }
+
+            .calendar-day-number {
+                font-size: 10px;
+            }
+
+            .calendar-day-amount {
+                font-size: 6px;
+                margin-top: 1px;
+            }
+
+            .summary-card {
+                padding: 8px;
+                width: 100%;
+                max-width: 100%;
+                margin-bottom: 6px;
+            }
+
+            .summary-card h3 {
+                font-size: 11px;
+                margin-bottom: 4px;
+            }
+
+            .summary-item {
+                font-size: 9px;
+                padding: 3px 0;
+            }
+
+            .summary-item-label {
+                font-size: 9px;
+            }
+
+            .summary-item-value {
+                font-size: 9px;
+                margin-left: 4px;
+            }
+
+            .payment-box {
+                padding: 6px;
+                margin-top: 4px;
+            }
+
+            .payment-box h4 {
+                font-size: 10px;
+                margin-bottom: 2px;
+            }
+
+            .payment-amount {
+                font-size: 12px;
+            }
+
+            .modal-content {
+                width: 96%;
+                max-width: 100%;
+                margin: 25% auto 20px;
+                padding: 12px;
+            }
+
+            .modal-header h2 {
+                font-size: 13px;
+            }
+
+            .form-group {
+                margin-bottom: 8px;
+            }
+
+            .form-group label {
+                font-size: 10px;
+            }
+
+            .form-group input {
+                padding: 5px;
+                font-size: 10px;
+            }
+
+            .conversion-info {
+                font-size: 9px;
+            }
+
+            .time-inputs {
+                gap: 6px;
+            }
+
+            .modal-buttons {
+                gap: 6px;
+            }
+
+            .btn-submit, .btn-delete, .btn-cancel {
+                padding: 6px;
+                font-size: 9px;
+            }
+
+            .info-table {
+                font-size: 10px;
+            }
+
+            .info-table th,
+            .info-table td {
+                padding: 6px;
+            }
+
+            .info-section h3 {
+                font-size: 11px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Kalkulator Zarobków</h1>
+            <div class="header-controls">
+                <div class="vehicle-toggle">
+                    <button class="vehicle-btn active" id="vehicleCarBtn" onclick="app.setVehicle('car')">🚗 Samochód</button>
+                    <button class="vehicle-btn" id="vehicleBikeBtn" onclick="app.setVehicle('bike')">🚴 Rower</button>
+                </div>
+                <button class="btn btn-info" onclick="app.openInfoModal()">ℹ️ Info</button>
+                <button class="btn btn-primary" onclick="app.exportData()">📥</button>
+                <button class="btn btn-danger" onclick="app.resetAllData()">🗑️</button>
+            </div>
+        </div>
+
+        <div class="content">
+            <div class="calendar-section">
+                <div class="month-nav">
+                    <button onclick="app.previousMonth()">←</button>
+                    <div class="month-display" id="monthDisplay"></div>
+                    <button onclick="app.nextMonth()">→</button>
+                </div>
+                <div class="calendar">
+                    <div class="calendar-header" id="calendarHeader"></div>
+                    <div class="calendar-grid" id="calendarGrid"></div>
+                </div>
+            </div>
+
+            <div class="summary-section">
+                <div class="summary-card">
+                    <h3>📊 Podsumowanie</h3>
+                    <div class="summary-item">
+                        <span class="summary-item-label">Godziny:</span>
+                        <span class="summary-item-value" id="totalHours">0.00</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-item-label">Kilometry:</span>
+                        <span class="summary-item-value" id="totalKm">0.00</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-item-label">Pon-Czw:</span>
+                        <span class="summary-item-value" id="weekdayOrders">0</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-item-label">Pt-Nd:</span>
+                        <span class="summary-item-value" id="weekendOrders">0</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-item-label">Napiwki:</span>
+                        <span class="summary-item-value income" id="totalTips">+ 0.00 zł</span>
+                    </div>
+                </div>
+
+                <div class="summary-card">
+                    <h3>⚙️ Wypłata</h3>
+                    <div class="summary-item">
+                        <span class="summary-item-label">Wypłata do 25:</span>
+                        <span class="summary-item-value income" id="payment1">+ 0.00 zł</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-item-label">Wypłata do 10:</span>
+                        <span class="summary-item-value income" id="payment2">+ 0.00 zł</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-item-label">Bonus za zamówienia:</span>
+                        <span class="summary-item-value income" id="orderBonus">+ 0.00 zł</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-item-label">Zwrot za telefon:</span>
+                        <span class="summary-item-value income" id="phoneRefund">+ 0.00 zł</span>
+                    </div>
+                </div>
+
+                <div class="summary-card">
+                    <h3>💸 Koszty</h3>
+                    <div class="summary-item" id="fuelItem">
+                        <span class="summary-item-label">Paliwo:</span>
+                        <span class="summary-item-value cost" id="totalFuel">- 0.00 zł</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-item-label">Amortyzacja:</span>
+                        <span class="summary-item-value cost" id="depreciation">- 0.00 zł</span>
+                    </div>
+                </div>
+
+                <div class="summary-card" style="border-left-color: #ff6b4a;">
+                    <h3>💰 Razem</h3>
+                    <div class="payment-box">
+                        <h4>Brutto</h4>
+                        <div class="payment-amount" id="grossPayment">+ 0.00 zł</div>
+                    </div>
+                    <div class="payment-box">
+                        <h4>Brutto - koszty</h4>
+                        <div class="payment-amount" id="netPayment">+ 0.00 zł</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Dodaj dane</h2>
+                <button class="close" onclick="app.closeModal()">&times;</button>
+            </div>
+            <form onsubmit="app.saveEntry(event)">
+                <div class="form-group">
+                    <label>Godziny:</label>
+                    <div class="time-inputs">
+                        <div>
+                            <input type="number" id="hours" min="0" max="23" value="0" required>
+                            <small>H</small>
+                        </div>
+                        <div>
+                            <input type="number" id="minutes" min="0" max="59" value="0" required>
+                            <small>M</small>
+                        </div>
+                    </div>
+                    <div class="conversion-info" id="timeConversion">= 0.00 h</div>
+                </div>
+                <div class="form-group">
+                    <label for="km">Km:</label>
+                    <input type="number" id="km" step="0.01" min="0" value="0" required>
+                </div>
+                <div class="form-group">
+                    <label for="orders">Zamówienia:</label>
+                    <input type="number" id="orders" min="0" value="0" required>
+                </div>
+                <div class="form-group">
+                    <label for="tips">Napiwki:</label>
+                    <input type="number" id="tips" step="0.01" min="0" value="0" required>
+                </div>
+                <div class="form-group" id="fuelForm">
+                    <label for="fuel">Paliwo:</label>
+                    <input type="number" id="fuel" step="0.01" min="0" value="0" required>
+                </div>
+                <div class="modal-buttons">
+                    <button type="submit" class="btn-submit">💾</button>
+                    <button type="button" class="btn-delete" id="deleteBtn" style="display: none;" onclick="app.deleteEntry()">🗑️</button>
+                    <button type="button" class="btn-cancel" onclick="app.closeModal()">X</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="infoModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>ℹ️ Informacje</h2>
+                <button class="close" onclick="app.closeInfoModal()">&times;</button>
+            </div>
+
+            <div class="info-section">
+                <h3>🚗 Samochód</h3>
+                <table class="info-table">
+                    <tr>
+                        <td><strong>Kilometrówka:</strong></td>
+                        <td>0.85 zł/km</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Amortyzacja:</strong></td>
+                        <td>0.23 zł/km</td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="info-section">
+                <h3>🚴 Rower</h3>
+                <table class="info-table">
+                    <tr>
+                        <td><strong>Kilometrówka:</strong></td>
+                        <td>0.55 zł/km</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Amortyzacja:</strong></td>
+                        <td>0.1 zł/km</td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="info-section">
+                <h3>📦 Mnożniki za zamówienia (Pon-Czw / Pt-Nd)</h3>
+                <table class="info-table">
+                    <tr>
+                        <th style="text-align: center;">Zamówienia/mies</th>
+                        <th style="text-align: center;">Pon-Czw</th>
+                        <th style="text-align: center;">Pt-Nd</th>
+                    </tr>
+                    <tr>
+                        <td>750+</td>
+                        <td style="text-align: center;">2.5 zł/zam</td>
+                        <td style="text-align: center;">5.0 zł/zam</td>
+                    </tr>
+                    <tr>
+                        <td>550-749</td>
+                        <td style="text-align: center;">2.5 zł/zam</td>
+                        <td style="text-align: center;">5.0 zł/zam</td>
+                    </tr>
+                    <tr>
+                        <td>400-549</td>
+                        <td style="text-align: center;">2.0 zł/zam</td>
+                        <td style="text-align: center;">4.0 zł/zam</td>
+                    </tr>
+                    <tr>
+                        <td>250-399</td>
+                        <td style="text-align: center;">1.5 zł/zam</td>
+                        <td style="text-align: center;">3.0 zł/zam</td>
+                    </tr>
+                    <tr>
+                        <td>125-249</td>
+                        <td style="text-align: center;">1.0 zł/zam</td>
+                        <td style="text-align: center;">2.0 zł/zam</td>
+                    </tr>
+                    <tr>
+                        <td>50-124</td>
+                        <td style="text-align: center;">1.0 zł/zam</td>
+                        <td style="text-align: center;">1.0 zł/zam</td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="info-section">
+                <h3>💰 Inne stawki</h3>
+                <table class="info-table">
+                    <tr>
+                        <td><strong>Stawka godzinowa:</strong></td>
+                        <td>30.50 zł/h</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Zwrot za pranie:</strong></td>
+                        <td>0.10 zł/h</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Zwrot za telefon < 40h/mies:</strong></td>
+                        <td>0.62 zł/h</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Zwrot za telefon > 40h/mies:</strong></td>
+                        <td>25.00 zł</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const app = {
+            currentDate: new Date(),
+            data: {},
+            selectedDate: null,
+            vehicle: 'car',
+            HOURLY_RATE: 30.5,
+            HOURLY_RATE_2026: 31.4,
+            DEPRECIATION_CAR: 0.23,
+            DEPRECIATION_BIKE: 0.1,
+            MILEAGE_CAR: 0.85,
+            MILEAGE_BIKE: 0.55,
+            LAUNDRY_PER_HOUR: 0.1,
+            OVERTIME_HOURS: 40,
+            PHONE_REFUND_LOW: 0.62,
+            PHONE_REFUND_HIGH: 25,
+
+            init() {
+                this.loadVehicle();
+                this.loadData();
+                this.renderCalendar();
+                this.updateSummary();
+                document.getElementById('hours').addEventListener('change', () => this.updateTimeConversion());
+                document.getElementById('minutes').addEventListener('change', () => this.updateTimeConversion());
+            },
+
+            getRateForYear(year) {
+                if (year === 2026) return this.HOURLY_RATE_2026;
+                return this.HOURLY_RATE;
+            },  
+
+
+            setVehicle(type) {
+                this.vehicle = type;
+                localStorage.setItem('deliveryVehicle', type);
+                document.getElementById('vehicleCarBtn').classList.toggle('active', type === 'car');
+                document.getElementById('vehicleBikeBtn').classList.toggle('active', type === 'bike');
+                this.updateUIVisibility();
+                this.updateSummary();
+                this.renderCalendar();
+            },
+
+            loadVehicle() {
+                this.vehicle = localStorage.getItem('deliveryVehicle') || 'car';
+                document.getElementById('vehicleCarBtn').classList.toggle('active', this.vehicle === 'car');
+                document.getElementById('vehicleBikeBtn').classList.toggle('active', this.vehicle === 'bike');
+                this.updateUIVisibility();
+            },
+
+            getMileageRate() {
+                return this.vehicle === 'car' ? this.MILEAGE_CAR : this.MILEAGE_BIKE;
+            },
+
+            getDepreciationRate() {
+                return this.vehicle === 'car' ? this.DEPRECIATION_CAR : this.DEPRECIATION_BIKE;
+            },
+
+            updateUIVisibility() {
+                const isBike = this.vehicle === 'bike';
+                const fuelItem = document.getElementById('fuelItem');
+                const fuelForm = document.getElementById('fuelForm');
+
+                if (isBike) {
+                    fuelItem.classList.add('hidden');
+                    fuelForm.style.display = 'none';
+                } else {
+                    fuelItem.classList.remove('hidden');
+                    fuelForm.style.display = 'block';
+                }
+            },
+
+            openInfoModal() {
+                document.getElementById('infoModal').style.display = 'block';
+            },
+
+            closeInfoModal() {
+                document.getElementById('infoModal').style.display = 'none';
+            },
+
+            getMonthKey(date) {
+                return `salary_${date.getFullYear()}_${String(date.getMonth() + 1).padStart(2, '0')}`;
+            },
+
+            loadData() {
+                const key = this.getMonthKey(this.currentDate);
+                const stored = localStorage.getItem(key);
+                this.data = stored ? JSON.parse(stored) : { entries: {} };
+            },
+
+            saveData() {
+                localStorage.setItem(this.getMonthKey(this.currentDate), JSON.stringify(this.data));
+            },
+
+            formatDate(date) {
+                return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+                
+            },
+
+            calculateMonthlyStats(monthData) {
+                const entries = monthData.entries || {};
+                let totalHours = 0, totalKm = 0, weekdayOrders = 0, weekendOrders = 0, totalTips = 0;
+
+                Object.entries(entries).forEach(([dateStr, entry]) => {
+                    totalHours += entry.hours;
+                    totalKm += entry.km;
+                    totalTips += entry.tips;
+
+                    const date = new Date(dateStr);
+                    const dayOfWeek = date.getDay();
+                    if ([1, 2, 3, 4].includes(dayOfWeek)) weekdayOrders += entry.orders;
+                    else weekendOrders += entry.orders;
+                });
+
+                const totalOrders = weekdayOrders + weekendOrders;
+                let weekdayMultiplier = 0, weekendMultiplier = 0;
+
+                if (totalOrders >= 750) { weekdayMultiplier = 2.5; weekendMultiplier = 5; }
+                else if (totalOrders >= 550) { weekdayMultiplier = 2.5; weekendMultiplier = 5; }
+                else if (totalOrders >= 400) { weekdayMultiplier = 2; weekendMultiplier = 4; }
+                else if (totalOrders >= 250) { weekdayMultiplier = 1.5; weekendMultiplier = 3; }
+                else if (totalOrders >= 125) { weekdayMultiplier = 1; weekendMultiplier = 2; }
+                else if (totalOrders >= 50) { weekdayMultiplier = 1; weekendMultiplier = 1; }
+
+                return { totalHours, totalKm, weekdayOrders, weekendOrders, totalOrders, weekdayMultiplier, weekendMultiplier, totalTips };
+            },
+
+            calculateDailyEarnings(entry, monthStats) {
+                if (!entry) return 0;
+                const dateStr = Object.keys(this.data.entries).find(key => this.data.entries[key] === entry);
+                const date0 = new Date(dateStr);
+                const year = date0.getFullYear();
+                const currentRate = this.getRateForYear(year);
+
+                const hourlyEarnings = entry.hours * currentRate;
+                const mileageEarnings = entry.km * this.getMileageRate();
+                const laundryEarnings = entry.hours * this.LAUNDRY_PER_HOUR;
+
+                const date = new Date(Object.keys(this.data.entries).find(key => this.data.entries[key] === entry));
+                const dayOfWeek = date.getDay();
+                let dailyOrderBonus = 0;
+
+                if ([1, 2, 3, 4].includes(dayOfWeek)) dailyOrderBonus = entry.orders * monthStats.weekdayMultiplier;
+                else dailyOrderBonus = entry.orders * monthStats.weekendMultiplier;
+
+                return hourlyEarnings + mileageEarnings + laundryEarnings + dailyOrderBonus + entry.tips;
+            },
+
+            getColorTier(amount) {
+                if (amount < 100) return 'tier-0';
+                if (amount < 150) return 'tier-1';
+                if (amount < 250) return 'tier-2';
+                if (amount < 350) return 'tier-3';
+                if (amount < 450) return 'tier-4';
+                return 'tier-5';
+            },
+
+            renderCalendar() {
+                const year = this.currentDate.getFullYear();
+                const month = this.currentDate.getMonth();
+
+                document.getElementById('monthDisplay').textContent = this.currentDate.toLocaleDateString('pl-PL', { month: 'long', year: 'numeric' });
+
+                const firstDay = new Date(year, month, 1);
+                const startDate = new Date(firstDay);
+                startDate.setDate(startDate.getDate() - (firstDay.getDay() === 0 ? 6 : firstDay.getDay() - 1));
+
+                const header = document.getElementById('calendarHeader');
+                header.innerHTML = '';
+                ['Pon', 'Wt', 'Śr', 'Czw', 'Pt', 'Sb', 'Nd'].forEach(day => {
+                    const div = document.createElement('div');
+                    div.textContent = day;
+                    header.appendChild(div);
+                });
+
+                const grid = document.getElementById('calendarGrid');
+                grid.innerHTML = '';
+                const monthStats = this.calculateMonthlyStats(this.data);
+
+                for (let i = 0; i < 42; i++) {
+                    const date = new Date(startDate);
+                    date.setDate(date.getDate() + i);
+
+                    const cell = document.createElement('div');
+                    cell.className = 'calendar-day';
+
+                    if (date.getMonth() !== month) {
+                        cell.classList.add('other-month');
+                        cell.textContent = date.getDate();
+                    } else {
+                        const dateStr = this.formatDate(date);
+                        const entry = this.data.entries?.[dateStr];
+
+                        cell.innerHTML = `<div class="calendar-day-number">${date.getDate()}</div>`;
+
+                        if (entry) {
+                            const dailyAmount = this.calculateDailyEarnings(entry, monthStats);
+                            cell.innerHTML += `<div class="calendar-day-amount">${dailyAmount.toFixed(2)}</div>`;
+                            cell.classList.add(this.getColorTier(dailyAmount));
+                        }
+
+                        cell.onclick = () => this.openModal(date);
+                    }
+
+                    grid.appendChild(cell);
+                }
+            },
+
+            openModal(date) {
+                this.selectedDate = date;
+                const dateStr = this.formatDate(date);
+                const entry = this.data.entries?.[dateStr];
+                const dayName = date.toLocaleDateString('pl-PL', { weekday: 'long' });
+
+                document.getElementById('modalTitle').textContent = `${date.getDate()} ${this.currentDate.toLocaleDateString('pl-PL', { month: 'long' })} (${dayName})`;
+
+                if (entry) {
+                    document.getElementById('hours').value = Math.floor(entry.hours);
+                    document.getElementById('minutes').value = entry.minutes || Math.round((entry.hours % 1) * 60);
+                    document.getElementById('km').value = entry.km;
+                    document.getElementById('orders').value = entry.orders;
+                    document.getElementById('tips').value = entry.tips;
+                    document.getElementById('fuel').value = entry.fuel;
+                    document.getElementById('deleteBtn').style.display = 'block';
+                } else {
+                    document.getElementById('hours').value = 0;
+                    document.getElementById('minutes').value = 0;
+                    document.getElementById('km').value = 0;
+                    document.getElementById('orders').value = 0;
+                    document.getElementById('tips').value = 0;
+                    document.getElementById('fuel').value = 0;
+                    document.getElementById('deleteBtn').style.display = 'none';
+                }
+
+                this.updateTimeConversion();
+                document.getElementById('modal').style.display = 'block';
+            },
+
+            updateTimeConversion() {
+                const hours = parseFloat(document.getElementById('hours').value) || 0;
+                const minutes = parseFloat(document.getElementById('minutes').value) || 0;
+                document.getElementById('timeConversion').textContent = `= ${(hours + minutes / 60).toFixed(2)} h`;
+            },
+
+            closeModal() {
+                document.getElementById('modal').style.display = 'none';
+                this.selectedDate = null;
+            },
+
+            saveEntry(event) {
+                event.preventDefault();
+                if (!this.selectedDate) return;
+
+                const hours = parseFloat(document.getElementById('hours').value) || 0;
+                const minutes = parseFloat(document.getElementById('minutes').value) || 0;
+
+                const entry = {
+                    hours: hours + minutes / 60,
+                    minutes: parseInt(document.getElementById('minutes').value) || 0,
+                    km: parseFloat(document.getElementById('km').value) || 0,
+                    orders: parseInt(document.getElementById('orders').value) || 0,
+                    tips: parseFloat(document.getElementById('tips').value) || 0,
+                    fuel: this.vehicle === 'bike' ? 0 : (parseFloat(document.getElementById('fuel').value) || 0)
+                };
+
+                if (!this.data.entries) this.data.entries = {};
+                this.data.entries[this.formatDate(this.selectedDate)] = entry;
+
+                this.saveData();
+                this.closeModal();
+                this.renderCalendar();
+                this.updateSummary();
+            },
+
+            deleteEntry() {
+                if (!this.selectedDate) return;
+                delete this.data.entries[this.formatDate(this.selectedDate)];
+                this.saveData();
+                this.closeModal();
+                this.renderCalendar();
+                this.updateSummary();
+            },
+
+            updateSummary() {
+                const monthStats = this.calculateMonthlyStats(this.data);
+                let totalFuel = 0;
+
+                // Tylko dla samochodu liczmy paliwo
+                if (this.vehicle === 'car') {
+                    totalFuel = Object.values(this.data.entries || {}).reduce((sum, e) => sum + e.fuel, 0);
+                }
+
+                document.getElementById('totalHours').textContent = monthStats.totalHours.toFixed(2);
+                document.getElementById('totalKm').textContent = monthStats.totalKm.toFixed(2);
+                document.getElementById('weekdayOrders').textContent = monthStats.weekdayOrders;
+                document.getElementById('weekendOrders').textContent = monthStats.weekendOrders;
+                document.getElementById('totalTips').textContent = '+ ' + monthStats.totalTips.toFixed(2) + ' zł';
+                document.getElementById('totalFuel').textContent = '- ' + totalFuel.toFixed(2) + ' zł';
+
+
+                
+                const payment1Hours = Object.entries(this.data.entries || {})
+                    .filter(([dateStr]) => {
+                        const date = new Date(dateStr);
+                        return date.getMonth() === this.currentDate.getMonth() && date.getDate() <= 15;
+                    })
+                    .reduce((sum, [, entry]) => sum + entry.hours, 0);
+
+                const payment2Hours = monthStats.totalHours - payment1Hours;
+                const currentRate = this.getRateForYear(this.currentDate.getFullYear());
+                const payment1 = payment1Hours * currentRate;
+
+                const laundry = monthStats.totalHours * this.LAUNDRY_PER_HOUR;
+                const mileage = monthStats.totalKm * this.getMileageRate();
+                const orderBonus = (monthStats.weekdayOrders * monthStats.weekdayMultiplier) + (monthStats.weekendOrders * monthStats.weekendMultiplier);
+                const payment2 = (payment2Hours * currentRate) + monthStats.totalTips + laundry + mileage + orderBonus;
+
+                const grossPayment = payment1 + payment2;
+
+                // Zwrot za telefon
+                let phoneRefund = 0;
+                if (monthStats.totalHours > 0 && monthStats.totalHours < 40) {
+                    phoneRefund = monthStats.totalHours * this.PHONE_REFUND_LOW;
+                } else if (monthStats.totalHours >= 40) {
+                    phoneRefund = this.PHONE_REFUND_HIGH;
+                }
+
+                const grossPaymentWithRefund = grossPayment + phoneRefund;
+                const depreciation = monthStats.totalKm * this.getDepreciationRate();
+                const netPayment = grossPaymentWithRefund - totalFuel - depreciation;
+
+                document.getElementById('payment1').textContent = '+ ' + payment1.toFixed(2) + ' zł';
+                document.getElementById('payment2').textContent = '+ ' + payment2.toFixed(2) + ' zł';
+                document.getElementById('orderBonus').textContent = '+ ' + orderBonus.toFixed(2) + ' zł';
+                document.getElementById('phoneRefund').textContent = '+ ' + phoneRefund.toFixed(2) + ' zł';
+                document.getElementById('depreciation').textContent = '- ' + depreciation.toFixed(2) + ' zł';
+                document.getElementById('grossPayment').textContent = '+ ' + grossPaymentWithRefund.toFixed(2) + ' zł';
+                document.getElementById('netPayment').textContent = '+ ' + netPayment.toFixed(2) + ' zł';
+            },
+
+            previousMonth() {
+                this.currentDate.setMonth(this.currentDate.getMonth() - 1);
+                this.loadData();
+                this.renderCalendar();
+                this.updateSummary();
+            },
+
+            nextMonth() {
+                this.currentDate.setMonth(this.currentDate.getMonth() + 1);
+                this.loadData();
+                this.renderCalendar();
+                this.updateSummary();
+            },
+
+            resetAllData() {
+                if (confirm('Na pewno usunąć wszystkie dane?')) {
+                    for (let i = 0; i < localStorage.length; i++) {
+                        const key = localStorage.key(i);
+                        if (key.startsWith('salary_')) {
+                            localStorage.removeItem(key);
+                            i--;
+                        }
+                    }
+                    this.data = { entries: {} };
+                    this.renderCalendar();
+                    this.updateSummary();
+                }
+            },
+
+            exportData() {
+                const allData = {};
+                for (let i = 0; i < localStorage.length; i++) {
+                    const key = localStorage.key(i);
+                    if (key.startsWith('salary_')) {
+                        allData[key] = JSON.parse(localStorage.getItem(key));
+                    }
+                }
+                const blob = new Blob([JSON.stringify(allData, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'dane-wynagrodzenia.json';
+                a.click();
+            }
+        };
+
+        window.onclick = function(event) {
+            const modal = document.getElementById('modal');
+            const infoModal = document.getElementById('infoModal');
+            if (event.target === modal) app.closeModal();
+            if (event.target === infoModal) app.closeInfoModal();
+        };
+
+        app.init();
+    </script>
+</body>
+</html>
